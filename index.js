@@ -2,6 +2,7 @@ const express = require('express');
 const bodyParser = require('body-parser');
 
 const app = express()
+app.use(bodyParser.json())
 
 const { Sequelize, DataTypes } = require('sequelize');
 const sequelize = new Sequelize('postgres://stashag:localhost:5432/todoapp')
@@ -32,9 +33,21 @@ tableName: "Item"
 
 //ADD TODO
 
-app.post("/todos", (req, res) =>{
-    const {description} = req.body;
-})
+app.post("/todos", (req, res) => {
+    // try {
+        const { description } = req.body;
+        Item.create({ description: description }).then(item => {
+            console.log(item.id, item.description);
+        })
+        // const newTodo = await ();
+    // }
+
+//     res.json(newTodo.row[0]);
+// } catch (err) {
+//     console.error(err.message);
+// }
+    
+});
 
 
 //GET TODO
@@ -61,5 +74,9 @@ app.put("/todos/:id", (req, res)=> {
 //DELETE TODOS
 app.delete("/todos/:id", (req, res) =>{
     const {id}  =  req.params;
+})
+
+app.listen(3001, () => {
+    console.log("Server started") 
 })
 
