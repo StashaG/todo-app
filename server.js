@@ -1,11 +1,23 @@
 const express = require('express');
 const bodyParser = require('body-parser');
+const { Sequelize } = require('sequelize');
 
 const app = express()
 app.use(bodyParser.json())
 
-const { Sequelize, DataTypes } = require('sequelize');
-const sequelize = new Sequelize('postgres://stashag:localhost:5432/todoapp')
+let dbPassword = process.env.DB_PASSWORD || null
+
+const sequelize = new Sequelize('stashag', process.env.DB_USER, dbPassword, {
+    host: process.env.DB_HOST,
+    dialect: 'postgres'
+});
+
+sequelize.authenticate().then( () => {
+    console.log('Connection has been established successfully.');
+    sequelize.close()
+}).catch( (err) => {
+    console.error('Unable to connect to the database:', err);
+}) 
 
 const Item = sequelize.define('Item', {
     id: {
